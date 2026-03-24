@@ -34,14 +34,16 @@ Hardware topology. What runs where. How they connect.
   - Mnemo Cortex: runs as service, port 50001
   - Ollama: port 11434
 - **Services:**
-  - Mnemo Cortex v2.0 (port 50001) — watcher + refresher daemons
-  - NemoClaw v0.1.0 — OpenClaw sandboxes with NVIDIA inference
-  - Sparky (NemoClaw pod, OpenClaw v2026.3.11, CLI only)
+  - Mnemo Cortex v2.0 (port 50001) — watcher + refresher daemons. Confirmed healthy through reinstall.
+  - NemoClaw v0.1.0 — **clean install via official installer** (2026-03-23). Source: `~/.nemoclaw/source/` cloned from GitHub.
+  - Sparky (NemoClaw sandbox `sparks-nemo`, Landlock + seccomp + netns, NVIDIA cloud inference)
+  - `openshell forward` manages port 18789 (127.0.0.1 → sandbox). Gateway serves OpenClaw Control HTML.
+  - Sandbox can reach mnemo-cortex at `host.docker.internal:50001` (UFW rule in place).
   - OpenClaw v2026.3.22 (host-level)
-  - Ollama (Tailscale: 100.22.45.109:11434)
+  - Ollama (port 11434, 15 models). Confirmed healthy through reinstall.
   - SERVERAL MemChunks watcher (systemd user service)
-- **Retired:** Alice Moltman — fully disabled 2026-03-23. Config archived to `/media/guy/5TB_DRIVE-2/ARCHIVE/alice-host-config-20260323/`. Host-level gateway, sparks-router, and mnemo watcher/refresher disabled.
-- **Notes:** THE VAULT is the brain. All memory archives and heavy processing happen here. From IGOR, reach mnemo-cortex at `http://artforge:50001`.
+- **Retired:** Alice Moltman — fully disabled 2026-03-23. Config archived to `/media/guy/5TB_DRIVE-2/ARCHIVE/alice-host-config-20260323/`.
+- **Notes:** THE VAULT is the brain. All memory archives and heavy processing happen here. From IGOR, reach mnemo-cortex at `http://artforge:50001`. Gateway currently localhost-only — needs `0.0.0.0` bind for IGOR browser access.
 
 ## IGOR-2
 - **Hostname:** IGOR-2

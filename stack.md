@@ -7,6 +7,8 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 ## NemoClaw
 - **Version:** 0.1.0
 - **Location:** THE VAULT — `~/.npm-global/bin/nemoclaw`
+- **Source:** github.com/NVIDIA/NemoClaw (cloned to `~/.nemoclaw/source/`)
+- **Installed via:** Official installer: `curl -fsSL https://www.nvidia.com/nemoclaw.sh | bash` (2026-03-23 clean reinstall)
 - **What it is:** CLI that runs OpenClaw inside OpenShell sandboxes with NVIDIA inference. Manages sandbox lifecycle, policy presets, and deployment.
 - **Key commands:**
   - `nemoclaw list` — list sandboxes
@@ -15,11 +17,14 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
   - `nemoclaw <name> destroy` — tear down sandbox
   - `nemoclaw deploy <instance>` — deploy to Brev VM
   - `nemoclaw start/stop/status` — manage services (Telegram, tunnel)
+  - `nemoclaw onboard` — interactive setup wizard
 - **Dependencies:** openclaw 2026.3.11, Node >=20.0.0
-- **Config:** `~/.nemoclaw/credentials.json` (mode 600)
-- **Active sandbox:** `sparks-nemo` (multiple connect processes running since Mar 19)
-- **Pod networking:** NemoClaw pods are network-isolated by default — cannot reach host ports. Fix pending via drop-in YAML network policy presets (NemoClaw Compatibility Spec).
-- **Notes:** Credentials prompted on first use, saved securely. License: Apache-2.0.
+- **Config:** `~/.nemoclaw/credentials.json` (mode 600), `~/.nemoclaw/sandboxes.json`
+- **Active sandbox:** `sparks-nemo` (Landlock + seccomp + netns, NVIDIA cloud inference)
+- **Port forward:** `openshell forward` handles 127.0.0.1:18789 → sandbox natively. No proxy hacks.
+- **Pod networking:** Pods are network-isolated by default. Host services need: (a) OpenShell network policy entry via `openshell policy set`, and (b) UFW rule for Docker bridge subnets (172.16.0.0/12).
+- **WARNING:** The npm registry `nemoclaw` package (222 bytes) is a name squatter. Never `npm install -g nemoclaw` — always use the official installer.
+- **Notes:** License: Apache-2.0. Uninstall: `curl -fsSL https://raw.githubusercontent.com/NVIDIA/NemoClaw/refs/heads/main/uninstall.sh | bash`
 
 ## OpenClaw
 - **What it is:** Agent framework. Rocky and Sparky run on it.
