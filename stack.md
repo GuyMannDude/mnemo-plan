@@ -18,12 +18,16 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 - **Dependencies:** openclaw 2026.3.11, Node >=20.0.0
 - **Config:** `~/.nemoclaw/credentials.json` (mode 600)
 - **Active sandbox:** `sparks-nemo` (multiple connect processes running since Mar 19)
+- **Pod networking:** NemoClaw pods are network-isolated by default — cannot reach host ports. Fix pending via drop-in YAML network policy presets (NemoClaw Compatibility Spec).
 - **Notes:** Credentials prompted on first use, saved securely. License: Apache-2.0.
 
 ## OpenClaw
-- **What it is:** Agent framework. Rocky and Alice both run on it.
+- **What it is:** Agent framework. Rocky and Sparky run on it.
+- **Versions:**
+  - IGOR: v2026.3.13 (v2026.3.22 update pending green light)
+  - THE VAULT (host): v2026.3.22
+  - Sparky (NemoClaw pod): v2026.3.11
 - **Rocky config:** `~/.openclaw/workspace/` on IGOR
-- **Alice config:** On THE VAULT (artforge)
 - **Notes:** Rocky's SOUL.md and MEMORY.md in `~/.openclaw/workspace/` are sacred — never modify without asking.
 
 ## Mnemo Cortex
@@ -36,12 +40,18 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 - **CRITICAL:** No mnemo-cortex process should ever run on IGOR.
 
 ## Sparks Router
+- **Version:** 0.6.0
 - **What it is:** API router for Project Sparks services
+- **Location:** IGOR, localhost:8100
 - **Repo:** `~/github/sparks-router/` (local)
 - **Stack:** Python (pyproject.toml, requirements.txt)
 - **Config:** `config.json` (example at `config.example.json`)
+- **Tier mapping:**
+  - Smart/Utility tiers → Gemini 3.1 Pro
+  - Free tier → Nemotron
 - **UI:** `ui-server/` directory
 - **Scaffold:** `~/github/sparks-router/sparks-router-scaffold/`
+- **Tests:** `~/github/sparks-router/tests/ongoing/`
 
 ## Sparks Brain
 - **What it is:** Persistent markdown memory system for Claude Code

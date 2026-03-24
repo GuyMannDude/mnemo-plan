@@ -13,19 +13,19 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 **Fix:** TBD — active blocker.
 **Prevention:** TBD.
 
-## Mnemo-cortex pod network isolation
-**Date:** 2026-03-23 (reported)
-**Symptom:** Mnemo-cortex pod experiencing network isolation issues.
-**Cause:** Under investigation.
-**Fix:** TBD.
-**Prevention:** TBD.
+## Sparky/Mnemo pod network isolation
+**Date:** 2026-03-23 (ongoing)
+**Symptom:** Sparky (inside NemoClaw pod) cannot reach mnemo-cortex on THE VAULT at port 50001.
+**Cause:** NemoClaw pod network isolation blocks host port access by default. The pod is sandboxed and cannot see host services.
+**Fix:** Pending — need drop-in YAML network policy presets via NemoClaw Compatibility Spec to allow pod→host traffic on port 50001.
+**Prevention:** Any new service that needs pod↔host communication must have a network policy preset added to NemoClaw before deployment.
 
 ## Heartbeat cost leak
-**Date:** 2026-03-23 (reported)
-**Symptom:** Heartbeat mechanism generating excessive API calls, leaking costs.
-**Cause:** Under investigation. Likely related to the billing firehose pattern from 2026-03-16.
-**Fix:** TBD.
-**Prevention:** Monitor API call rates after any heartbeat/polling config changes.
+**Date:** 2026-03-23 (ongoing)
+**Symptom:** Cron job heartbeat burning ~$2.40/day in OpenRouter credits.
+**Cause:** Heartbeat cron job runs on the `main` agent without a model override, so it defaults to Gemini Pro instead of using the free Nemotron tier.
+**Fix:** Pending — need OpenClaw per-session model override to force heartbeat to free tier.
+**Prevention:** Any cron/scheduled agent call must specify an explicit model override. Never let scheduled jobs default to paid models.
 
 ## CC denied NemoClaw's existence
 **Date:** 2026-03-23
@@ -40,7 +40,7 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 **Cause:** Two OpenClaw settings were generating excessive API calls:
   - `memorySearch.experimental.sessionMemory` — 66 embedded agent runs/hour
   - `compaction.memoryFlush` — secondary token burner
-**Fix:** Disabled both settings in OpenClaw config.
+**Fix:** Disabled both settings in OpenClaw config. Also found and fixed same bug in THE VAULT host config (discovered 2026-03-23 per Rocky).
 **Prevention:** Audit any experimental/polling settings for cost before enabling. Monitor OpenRouter dashboard after config changes.
 
 ## Zombie mnemo-cortex process on IGOR

@@ -16,7 +16,8 @@ Hardware topology. What runs where. How they connect.
   - AgentB config: `~/.agentb/`
   - OpenClaw desk: `/home/guy/DESK/`
 - **Services:**
-  - Rocky (OpenClaw agent)
+  - Rocky (OpenClaw v2026.3.13, update to v2026.3.22 pending)
+  - Sparks Router v0.6.0 (localhost:8100)
   - Bullwinkle (Agent Zero, Docker, localhost:50090)
   - CronAlarm cron jobs
 - **Notes:** IGOR is a launchpad only — no heavy compute. **No mnemo-cortex process should ever run on IGOR** (see incidents). All major memory archives and backups live on THE VAULT.
@@ -35,9 +36,11 @@ Hardware topology. What runs where. How they connect.
 - **Services:**
   - Mnemo Cortex v2.0 (port 50001) — watcher + refresher daemons
   - NemoClaw v0.1.0 — OpenClaw sandboxes with NVIDIA inference
+  - Sparky (NemoClaw pod, OpenClaw v2026.3.11, CLI only)
+  - OpenClaw v2026.3.22 (host-level)
   - Ollama (Tailscale: 100.22.45.109:11434)
-  - Alice Moltman (OpenClaw agent, Telegram: @AliceMoltmanBot, gateway ws://127.0.0.1:18789)
   - SERVERAL MemChunks watcher (systemd user service)
+- **Retired:** Alice Moltman — fully disabled 2026-03-23. Config archived to `/media/guy/5TB_DRIVE-2/ARCHIVE/alice-host-config-20260323/`. Host-level gateway, sparks-router, and mnemo watcher/refresher disabled.
 - **Notes:** THE VAULT is the brain. All memory archives and heavy processing happen here. From IGOR, reach mnemo-cortex at `http://artforge:50001`.
 
 ## IGOR-2

@@ -14,10 +14,10 @@ How the Project Sparks ecosystem works. Conventions, architectural decisions, wo
 **Where:** THE VAULT — `~/.npm-global/bin/nemoclaw`
 **Key commands:** `nemoclaw list`, `nemoclaw <name> connect`, `nemoclaw <name> status`, `nemoclaw deploy <instance>`
 
-## Alice Takes the Bullets
-**What:** Alice Moltman is the test-first agent. When something is experimental, risky, or unproven — Alice runs it first on THE VAULT before it touches Rocky or production.
-**Why:** Rocky is Guy's primary agent. Downtime on Rocky = Guy is stuck. Alice is expendable by design.
-**How:** Deploy experimental configs to Alice's OpenClaw instance on artforge. Validate. Then promote to Rocky.
+## Alice Takes the Bullets → Sparky Takes the Bullets
+**What:** Alice Moltman is retired (2026-03-23). Sparky (in NemoClaw pod on THE VAULT) now fills the test-first role. When something is experimental, risky, or unproven — Sparky runs it first before it touches Rocky or production.
+**Why:** Rocky is Guy's primary agent. Downtime on Rocky = Guy is stuck. The test-first agent is expendable by design.
+**How:** Deploy experimental configs to Sparky's NemoClaw sandbox. Validate. Then promote to Rocky.
 
 ## Assembly Line Workflow
 **What:** Work flows through a defined pipeline:
