@@ -6,6 +6,14 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 
 ---
 
+## Heartbeat cron burning Gemini Pro credits on empty HEARTBEAT.md
+**Date:** 2026-03-23
+**Symptom:** Rocky's "System Health Heartbeat" cron job running every hour, costing ~$2.40/day in OpenRouter credits (Gemini 3.1 Pro).
+**Cause:** The cron job (`~/.openclaw/cron/jobs.json`, id `0bc68de3`) fires unconditionally every 3600s. It sends a payload to the `main` agent which uses Rocky's primary model (Gemini Pro). HEARTBEAT.md is comments-only and says to skip when empty, but the cron scheduler doesn't check file contents before firing — it always spins up a full model session.
+**Fix:** Disabled the cron job (`"enabled": false` in jobs.json). HEARTBEAT.md has no active tasks, so the job was doing nothing useful.
+**Re-enable when:** (a) there are actual heartbeat tasks in HEARTBEAT.md, AND (b) OpenClaw supports per-session model override to force heartbeat to the free Nemotron tier.
+**Prevention:** Never enable scheduled cron jobs on paid models without explicit model overrides. Heartbeat/polling jobs must use free-tier models.
+
 ## NemoClaw clean reinstall — gateway + identity + network all fixed
 **Date:** 2026-03-23
 **Symptom:** Multiple cascading issues: gateway "pairing required" error, pod→host network isolation, relay chain proxy hacks (`sparky-proxy.mjs`), device identity mismatch between sandbox/root users.
