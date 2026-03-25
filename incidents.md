@@ -6,6 +6,18 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 
 ---
 
+## Zombie mnemo-cortex v2 daemons on IGOR — probable source of mystery Gemini Flash calls
+**Date:** 2026-03-24
+**Symptom:** Two mnemo-cortex v2 processes running on IGOR since March 17 — `mnemo-watcher-rocky.sh` (PID 488150) and `mnemo-refresher-rocky.sh` (PID 488151). These are the old v2 watcher/refresher daemons that should only run on THE VAULT. Probable source of unexplained Gemini 2.5 Flash calls on OpenRouter — the v2 compaction code calls OpenRouter for LLM summarization.
+**Cause:** Systemd user services (`mnemo-watcher.service`, `mnemo-refresh.service`) in `~/.config/systemd/user/` were enabled and set to `WantedBy=default.target` with `Restart=on-failure`. They survived across reboots. Same zombie pattern as the March 16 incident.
+**Fix:**
+  1. Killed both processes
+  2. `systemctl --user stop` + `disable` both services
+  3. `systemctl --user daemon-reload`
+  4. Updated `~/scripts/mnemo-health.sh` — removed watcher/refresher checks (they're supposed to be dead), now only checks THE VAULT server health
+  5. Bumped heartbeat timeout 30s→60s, reset error counter (6 consecutive timeouts)
+**Prevention:** Standing rule reinforced: no mnemo-cortex process should ever run on IGOR. The systemd services are disabled but still on disk — if anyone re-enables them, the zombie pattern repeats. Consider deleting the service files entirely.
+
 ## agentb_bridge.py patched for multi-agent memory isolation
 **Date:** 2026-03-24
 **Symptom:** All agents (Rocky, CC) writing to the same flat `~/.agentb/memory/` directory. No tenant isolation. CC's test writeback mixed in with Rocky's memories.
