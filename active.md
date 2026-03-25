@@ -16,6 +16,9 @@ What's happening right now. Current work, priorities, blockers, next actions.
 ## Up Next
 - [ ] Browser test: Guy opens `http://artforge:18789/` from IGOR and chats with Sparky
 - [ ] Test browser fix that was pending before this session
+- [ ] **Rocky-to-CC bridge** — `claude -p` works from shell (needs `env -u CLAUDECODE`). Rocky can dispatch tasks to CC and read stdout. Not wired yet.
+- [ ] **BW integration** — BW reachable at localhost:50090, API is POST /api_message, bridge script at `~/.bw/bw-talk.sh`. Token pin may need refresh.
+- [ ] **IGOR-2 network access** — hostname doesn't resolve from IGOR. Need Tailscale IP or DNS entry.
 
 ## Blocked
 - **Heartbeat re-enable:** Needs OpenClaw per-session model override feature to force cron jobs to free tier. Job disabled until then.
@@ -36,6 +39,7 @@ What's happening right now. Current work, priorities, blockers, next actions.
 - [x] Billing firehose plugged on IGOR — disabled sessionMemory + memoryFlush (2026-03-16)
 
 ## Notes
+- **Work orders:** Guy drops tasks in a Google Doc at https://docs.google.com/document/d/13kDZHXodmsAi30Ah30CmHpktNHI98w8ZbTigEUR37fg/edit — CC should check this on startup.
 - Alice is retired. Sparky (in NemoClaw pod) now fills the experimental agent role.
 - NemoClaw installed via `curl -fsSL https://www.nvidia.com/nemoclaw.sh | bash` — never use npm install.
 - The npm registry `nemoclaw` package (222 bytes, by jacobtomlinson) is a name squatter. Real source: github.com/NVIDIA/NemoClaw.

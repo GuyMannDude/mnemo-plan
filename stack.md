@@ -84,11 +84,17 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 - **Port:** 11434
 - **From IGOR:** `100.22.45.109:11434` (Tailscale)
 
-## Agent Zero (Bullwinkle)
-- **Location:** IGOR, Docker container
-- **Port:** localhost:50090
-- **Model:** nvidia/nemotron-3-super-120b-a12b:free (all slots)
-- **Notes:** NOT managed by OpenClaw. Separate system.
+## Agent Zero (Bullwinkle / BW)
+- **Version:** v0.9.8.2
+- **Location:** IGOR, Docker container `bw` (image: agent0ai/agent-zero)
+- **Port:** localhost:50090 (maps to container port 80)
+- **API:** `POST http://localhost:50090/api_message` with `X-API-KEY` header and `{"message": "...", "context_id": "..."}` body
+- **Bridge script:** `~/.bw/bw-talk.sh` — grabs live token from container, sends message, returns JSON
+- **Token:** Should be pinned to `bw_sk_rocky_2026` via `~/.bw/pin-token.sh`, but may need refresh (settings show empty)
+- **Models:** All Nemotron free tier via OpenRouter (chat, util, browser). Embeddings via Ollama on THE VAULT (100.65.135.34:11434)
+- **Work dir:** `~/.bw/work_dir/` — has barbie-images from prior scraping tasks
+- **Config:** `~/.bw/settings/settings.json`
+- **Notes:** NOT managed by OpenClaw. Separate system. Container has been up 9+ days.
 
 ## CronAlarm
 - **Repo:** `~/github/cronalarm/`
