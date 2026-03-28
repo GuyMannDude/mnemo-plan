@@ -2,7 +2,7 @@
 
 What's happening right now. Current work, priorities, blockers, next actions.
 
-**Last updated:** 2026-03-24
+**Last updated:** 2026-03-27
 
 ---
 
@@ -24,6 +24,10 @@ What's happening right now. Current work, priorities, blockers, next actions.
 - **Heartbeat re-enable:** Needs OpenClaw per-session model override feature to force cron jobs to free tier. Job disabled until then.
 
 ## Recently Completed
+- [x] **Rocky's Router → GitHub** (2026-03-27) — Repo initialized at ~/github/rockys-router/, pushed to GuyMannDude/rockys-router. README with Rocky hero image, .gitignore, full product description.
+- [x] **"Sparks Router" → "Rocky's Router" rename** (2026-03-27) — Renamed across all projectsparks.ai pages (index, sparks-router, claudepilot, mnemo-cortex). Both ClaudePilot guide texts updated. Zero remaining "Sparks Router" text references.
+- [x] **Saves-money messaging** (2026-03-27) — Router page fully rebuilt from "under construction" to live product page with $2.40→$0 savings callout. New "saves money" section added to mnemo-cortex page linking the two products. Deployed to Firebase.
+- [x] **Rocky hero image** (2026-03-27) — ROCKY-REALISTIC-V3-brawler.png deployed to both GitHub README and projectsparks.ai router page.
 - [x] **Mnemo-Claude Bridge** (2026-03-24) — CC has persistent long-term memory via mnemo-cortex on THE VAULT. Agent ID "cc", isolated writes to `memory/cc/`, cross-agent reads from all agents (Rocky, Sparky, CC) via shared L2+L3. Two hook scripts: `mnemo-startup.sh` (session start context pull) and `mnemo-writeback.sh` (session end archive). agentb_bridge.py patched for multi-agent isolation. CLAUDE.md wired with startup/shutdown hooks.
 - [x] **Mnemo-cortex Claude Code integration packaged** (2026-03-24) — `integrations/claude-code/` added to mnemo-cortex repo with install.sh, hook scripts, README. PR #1 merged to master.
 - [x] **projectsparks.ai/mnemo-cortex page updated** (2026-03-24) — "Deep Recall" branding, Claude Code integration section with model tiers and install command, neon steampunk styling (brighter gold/amber/copper), bumped text sizes, added /sessions endpoint. Deployed via Firebase.
@@ -43,6 +47,7 @@ What's happening right now. Current work, priorities, blockers, next actions.
 - Alice is retired. Sparky (in NemoClaw pod) now fills the experimental agent role.
 - NemoClaw installed via `curl -fsSL https://www.nvidia.com/nemoclaw.sh | bash` — never use npm install.
 - The npm registry `nemoclaw` package (222 bytes, by jacobtomlinson) is a name squatter. Real source: github.com/NVIDIA/NemoClaw.
+- Rocky's Router v3 at localhost:50070, systemd service `rockys-router`. GitHub: GuyMannDude/rockys-router.
 - Sparks Router v0.6.0 active on IGOR (localhost:8100). Smart/Utility→Gemini Pro, Free→Nemotron.
 - Mnemo-cortex reachable from sandbox pod via `host.docker.internal:50001` (UFW rule for 172.16.0.0/12 on port 50001).
 
