@@ -48,3 +48,10 @@ Collaborators, agents, and roles in the Project Sparks ecosystem.
 ---
 
 *CC updates this file as collaborators and roles change.*
+
+## April
+- **Role:** Collaborator on Hoffman Bedding (Shopify store)
+- **Store:** hoffmanbedding.com (wugjc3-qh.myshopify.com)
+- **Location:** Madera, CA
+- **Contact:** hoffmanbedding@gmail.com, (559) 417-3135
+- **Notes:** Manages the Shopify admin. Granted CC theme API access (April 5). Has Google Ads account linked to store (GT-MQ76NGRV).
