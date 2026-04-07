@@ -6,6 +6,19 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 
 ---
 
+## Opie session watcher dead for 13 days — stale context, bad directives
+**Date:** 2026-04-07
+**Symptom:** Opie issued CC directives with 3 factual errors: claimed `/dreaming` was a CLI command (it's a plugin config), said ComfyUI was on THE VAULT (it's on IGOR-2), said Mem0 bridge "still works" (never deployed to production). CC caught all three during verification.
+**Cause:** Claude Desktop v2.1.87 moved session storage from disk JSONL (`~/.config/Claude/local-agent-mode-sessions/`) to internal IndexedDB (cowork VM architecture). The `mnemo-watcher-opie` systemd service was polling a dead JSONL file from March 25 — 13 days with zero new data captured. Opie's only memory came from manual `mnemo_save` calls, last one April 4.
+**Fix:**
+  1. Stopped and disabled `mnemo-watcher-opie` service
+  2. Patched MCP server to v2.1.0: tool call tracking, save reminder after 20 calls, `session_end` tool
+  3. Updated `opie_startup` identity text: warns Opie watcher is dead, saves are mandatory
+  4. Pulled Claude Desktop integration from public GitHub (mnemo-cortex v2.3.0)
+  5. Updated Opie brain lane with current ground truth
+  6. Updated mnemo-cortex-mcp standalone repo README (archived, can't push)
+**Prevention:** Desktop session storage format is not under our control. MCP-only memory (nudge system) is the reliable path. The file watcher approach only works for clients that write JSONL (CC, OpenClaw). Do not re-enable the Opie watcher unless Desktop brings back disk-based session files.
+
 ## Zombie mnemo-cortex v2 daemons on IGOR — probable source of mystery Gemini Flash calls
 **Date:** 2026-03-24
 **Symptom:** Two mnemo-cortex v2 processes running on IGOR since March 17 — `mnemo-watcher-rocky.sh` (PID 488150) and `mnemo-refresher-rocky.sh` (PID 488151). These are the old v2 watcher/refresher daemons that should only run on THE VAULT. Probable source of unexplained Gemini 2.5 Flash calls on OpenRouter — the v2 compaction code calls OpenRouter for LLM summarization.

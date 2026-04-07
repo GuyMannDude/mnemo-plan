@@ -29,11 +29,16 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 ## OpenClaw
 - **What it is:** Agent framework. Rocky and Sparky run on it.
 - **Versions:**
-  - IGOR: v2026.4.1 (updated April 1)
+  - IGOR: **v2026.4.5** (updated April 7, doctor --fix run)
   - THE VAULT (host): v2026.3.22
-  - Sparky (NemoClaw pod): v2026.3.11
+  - Sparky (NemoClaw pod): v2026.4.5
 - **Rocky config:** `~/.openclaw/workspace/` on IGOR
 - **Rocky model:** Grok 4 Fast via OpenRouter through Rocky's Switch (port 50060)
+- **New in 2026.4.5:**
+  - memory-core plugin enabled (was disabled), dreaming enabled (daily frequency)
+  - Heartbeat cron running clean on Nemotron free tier (1h interval, 348+ runs)
+  - Video/music provider plugins exist but need API keys or ComfyUI server to activate
+  - ComfyUI plugin loaded but no running server (ComfyUI is on IGOR-2, not network-reachable)
 - **Notes:** Rocky's SOUL.md and MEMORY.md in `~/.openclaw/workspace/` are sacred — never modify without asking.
 
 ## Chat Portal (Rocky's Chat Portal)
@@ -77,6 +82,7 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 
 ## Mnemo Cortex / AgentB Bridge
 - **Deployed version:** agentb_bridge v0.1.0 (standalone FastAPI, NOT the mnemo-cortex v2 repo)
+- **GitHub version:** v2.3.0 (April 7 — Desktop integration pulled)
 - **Server:** THE VAULT (artforge), port 50001, systemd service `agentb-bridge`
 - **From IGOR:** `http://artforge:50001`
 - **Source:** `~/agentb-bridge/agentb_bridge.py` on THE VAULT
@@ -84,7 +90,9 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 - **LLM:** Ollama local — qwen2.5:32b-instruct (reasoning) + nomic-embed-text (embedding)
 - **Endpoints:** `/health`, `/context`, `/preflight`, `/writeback`, `/ingest`
 - **Cache tiers:** L1 (pre-built bundles) → L2 (embedding index) → L3 (brute-force scan)
-- **Multi-agent:** Writes isolated to `~/.agentb/memory/{agent_id}/`, reads span all agents
+- **Multi-agent:** Writes isolated to `~/.agentb/memory/{agent_id}/`, reads span all agents. 170+ entries across cc, opie, rocky.
+- **Opie MCP server:** ~/github/mnemo-cortex-mcp/server.js v2.1.0 (nudge system, session_end tool). Spawned by Claude Desktop via stdio. mnemo-watcher-opie DISABLED (Desktop stopped writing JSONL).
+- **CC watcher:** mnemo-watcher-cc systemd service — still works (CC writes JSONL to ~/.claude/projects/).
 - **CRITICAL:** No mnemo-cortex process should run on IGOR port 50001 (conflicts with THE VAULT). Exception: Portal Mnemo on port 50002 for customer chat memory (separate data dir ~/.agentb-portal/).
 
 ## Sparks Router
