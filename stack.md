@@ -29,11 +29,11 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 ## OpenClaw
 - **What it is:** Agent framework. Rocky and Sparky run on it.
 - **Versions:**
-  - IGOR: **v2026.4.5** (updated April 7, doctor --fix run)
+  - IGOR: **v2026.4.8** (updated April 8, doctor --fix run)
   - THE VAULT (host): v2026.3.22
   - Sparky (NemoClaw pod): v2026.4.5
 - **Rocky config:** `~/.openclaw/workspace/` on IGOR
-- **Rocky model:** Grok 4 Fast via OpenRouter through Rocky's Switch (port 50060)
+- **Rocky model:** DeepSeek V3.2 via OpenRouter DIRECT (no Switch proxy). 5 aliases: DeepSeek, Grok, Free, Gemini, Grok41. Switch via `/model` command in chat.
 - **New in 2026.4.5:**
   - memory-core plugin enabled (was disabled), dreaming enabled (daily frequency)
   - Heartbeat cron running clean on Nemotron free tier (1h interval, 348+ runs)
@@ -66,12 +66,13 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 - **Identity:** Completely separate from Rocky M. — different name, Mnemo instance, agent_id
 - **Repo:** ~/github/rocky-widget/
 ## Rocky's Switch
-- **Version:** 1.1.0
+- **Version:** 1.2.0-oc2026.4.8
 - **Port:** 50060
 - **Config dir:** ~/.rockys-switch/ (config.json + keys.json, 0600 permissions)
 - **Service:** rockys-switch.service (systemd user)
-- **Repo:** ~/github/guys-switch/ (GuyMannDude/rockys-switch on GitHub)
-- **What it does:** API proxy between agents and model providers. 5 providers: OpenRouter, Anthropic, OpenAI, Google, NVIDIA.
+- **Repo:** ~/github/guys-switch/ (GuyMannDude/rockys-switch — **PRIVATE** as of April 8)
+- **What it does:** API proxy for Peter Widget ONLY. Rocky no longer uses it (switched to native OpenClaw model routing direct to OpenRouter).
+- **Status:** Pulled from public site and GitHub on April 8. Reasoning model fix (v1.2.0) and Bug 2 (/api/keys crash) shipped before pull.
 
 ## FrankenClaw
 - **Version:** 0.3.0
