@@ -31,7 +31,7 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 - **Versions:**
   - IGOR: **v2026.4.8** (updated April 8, doctor --fix run)
   - THE VAULT (host): v2026.3.22
-  - Sparky (NemoClaw pod): v2026.4.5
+  - Sparky (NemoClaw pod): **v2026.4.11** (was 2026.3.11, updated April 12)
   - **Latest available: v2026.4.11** (released April 11)
 - **Rocky config:** `~/.openclaw/workspace/` on IGOR
 - **Rocky model:** DeepSeek V3.2 via OpenRouter DIRECT (no Switch proxy). 5 aliases: DeepSeek, Grok, Free, Gemini, Grok41. Switch via `/model` command in chat.

@@ -9,14 +9,14 @@ What's happening right now. Current work, priorities, blockers, next actions.
 ## In Progress
 - [ ] **Hoffman Bedding — Google Merchant Center** — GMC suspended (not dead). All product/site fixes COMPLETE. Waiting for cool-down period to end before re-appeal. April tracking the timeline.
 - [ ] **Stripe publishable key** — Guy needs to grab pk_live_ from dashboard.stripe.com/apikeys
-- [ ] **Sparky Mnemo blocked** — NemoClaw openshell proxy returns 403 on non-TLS internal endpoints. Issue filed: NVIDIA/NemoClaw#1551. Sparky updated to OpenClaw 2026.4.5 but can't reach Mnemo.
+- [x] **Sparky Mnemo CONNECTED** — Was blocked (403 on proxy path). Docker bridge path (host.docker.internal:50001) works, bypasses proxy. Agent_id `sparky`, full round-trip verified. NemoClaw #1551 no longer a blocker.
 - [x] **Sparks Bus v0.1** — MCP message broker for inter-agent communication. SQLite-backed (separate from Mnemo). Auto-wake watcher daemon delivers messages to all agents. Full round-trip proven.
 - [x] **Discord wiring** — All 5 agents on Discord. Channel discipline set. Unified bot (CC+Opie) on systemd. Rocky locked to rocky-log/dispatch/alerts/discoveries only.
 - [x] **Peter Widget 3 bugs** — Stale knowledge (retired product rules), mnemo retry with backoff, hiccup loop fixed.
 - [x] **Mnemo Cortex v2.3.2** — Doc audit: dead Google model name (text-embedding-004→gemini-embedding-001), troubleshooting section, expected test output.
 
 ## Up Next
-- [ ] **OpenClaw update 2026.4.8 → 2026.4.11** — Active Memory plugin, agent failover fix, Ollama cache, security hardening. Run `openclaw doctor --fix` after. Daytime job — needs Rocky restart.
+- [x] **OpenClaw update → 2026.4.11** — Rocky updated from 4.8, Sparky from 3.11 (was listed as 4.5 — wrong). Both on 4.11 now. Doctor --fix clean on both.
 - [ ] Chat Portal deployment (after Stripe key)
 - [ ] Sparks Bus v0.2 — bus_subscribe (standing interest), message TTL
 - [ ] Mem0 bridge production deploy (code exists, needs pip install on THE VAULT)
@@ -25,7 +25,7 @@ What's happening right now. Current work, priorities, blockers, next actions.
 
 ## Blocked
 - **Heartbeat re-enable:** Resolved — heartbeat running on Nemotron free tier (1h interval)
-- **Sparky Mnemo:** Needs NVIDIA/NemoClaw#1551 fix or workaround
+- **Sparky Mnemo:** ~~Needs NVIDIA/NemoClaw#1551 fix or workaround~~ RESOLVED — Docker bridge path works. Consider updating/withdrawing #1551.
 
 ## Completed This Session (April 7, 2026)
 
