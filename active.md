@@ -2,11 +2,31 @@
 
 What's happening right now. Current work, priorities, blockers, next actions.
 
-**Last updated:** 2026-04-14
+**Last updated:** 2026-04-18
+
+---
+
+## Kickstart — Next Session (2026-04-19)
+Guy's words tonight: "Tomorrow we finish testing and bridging desktops."
+- **Finish testing:** Passport Lane Phase 1.5 is live on THE VAULT; 4 dispositions
+  (hard_block, review_required, local_only, allow) verified end-to-end via curl.
+  Opie has the new /observe response schema post-restart. Next move is likely
+  Opie driving observe_behavior through its MCP tool and confirming the new
+  disposition/taint/flagged_spans fields surface correctly in the Desktop UI.
+- **Bridging desktops:** ambiguous phrasing — could mean Desktop-to-Desktop MCP
+  bridge work, or bridging Opie (Desktop) and CC (IGOR) to share state more
+  cleanly. Ask Opie/Guy first move, don't assume.
+- **Fresh Opie context:** opie.md was last updated April 14-16 and does NOT yet
+  mention Passport Lane. If Opie boots without context, point him at
+  `brain/projects/products/mnemo-passport.md` (has both Phase 1 + Phase 1.5
+  SHIPPED banners I wrote today).
 
 ---
 
 ## In Progress
+- [x] **Passport Lane Phase 1.5** — SHIPPED 2026-04-18. Per-evidence provenance,
+  32 named detectors, 4-YAML config, Gate 2 stub, bucket_floor audit trail.
+  Commits: mnemo-cortex `d31e5fa`, brain `8ebd19f` (April-is-daughter fix).
 - [ ] **Rocky's Gallery — Shopify store** — Scaffold built at /home/guy/shopify/rockys-gallery/. Shopify AI Toolkit installed (17 skills). Andre's starter photos on IGOR. Next: Guy signs up for Shopify, picks 4 starter pieces, CC builds the store.
 - [ ] **Hoffman Bedding — Google Merchant Center** — GMC suspended (not dead). All product/site fixes COMPLETE. SEO + alt text applied (129/129 products, 723/723 images). 2 missing product types fixed. Microsoft Clarity installed (analytics only, April 14). Waiting for cool-down period to end before re-appeal.
 - [ ] **Stripe publishable key** — Guy needs to grab pk_live_ from dashboard.stripe.com/apikeys
