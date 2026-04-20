@@ -38,6 +38,11 @@ with Storm Bloom (maximalist) + begins actual Shopify site design.
 - `hard_block` F1=0.745 (detectors work), `allow` F1=0.269 (bucket floor too aggressive)
 - Two tunings proposed — Guy + Opie's call tomorrow before Karpathy loop kicks off
 - sparks-router-v2 PR #3 CLOSED with thank-you to AL
+- **UNDER CONSTRUCTION banner** at `mnemo-cortex/passport/README.md` shipped as commit `2306c11`
+- **Strategic direction locked 2026-04-19 (Opie filed):** normal users first, enterprise later.
+  At any "normal user vs enterprise" design fork, default to normal user; flag to Guy only if the
+  answer materially differs. Full guidance at
+  `sparks-brain-guy/brain/projects/products/mnemo-passport.md` (top banner).
 
 ### Windows ComfyUI
 - Patched `C:\Projects\ComfyUI\app\logger.py` to swallow `[Errno 22]` on flush
