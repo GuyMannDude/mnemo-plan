@@ -2,132 +2,96 @@
 
 What's happening right now. Current work, priorities, blockers, next actions.
 
-**Last updated:** 2026-04-19
+**Last updated:** 2026-04-21
 
 ---
 
-## Kickstart — Next Session (2026-04-20)
+## Kickstart — Next Session (probably 2026-04-22)
 
-### Rocky's Gallery — CC has creative ownership
-Guy's words April 19: *"It is your site to design however. Display however. Add pages.
-Keep building as we go. Maybe my 3D creations later. Have fun CC. Your site."*
+### Rocky's Gallery is LIVE
+**https://rockysgallery.com** — public, buyable, no password gate.
 
-**Current state:**
-- Domain rockysgallery.com LIVE (Shopify-managed, SSL, primary flipped, support@ email forwarding)
-- Password page rendering new WMS hero (`hero-wms-v1.png`, OpenAI-generated)
-- Andre's attribution removed until his hi-res photos surface
-- ComfyUI pipeline on IGOR-2 PROVEN: Flux.1-schnell-fp8 + 4x-UltraSharp, ~60s per print-ready 6144×4096 output
-- **13 pieces generated across 3 collections** — see `~/shopify/rockys-gallery/GALLERY-STATUS.md`
-  - Where Machines Sleep (5): Aisle, Patch, Tower, Cabinet, Landing
-  - Cathedral Forests (4): Vertical, Understory, Canopy, Mist
-  - Black Line (4): Tree, Wave, Ridge, Branch
-- All files at `~/shopify/rockys-gallery/inventory/cc-generated/`
+Store state:
+- **21 products** across 5 `$6` collections (WMS, Cathedral Forests, Black Line, Storm Bloom, Natural)
+- **1 active `$25` 1/1 drop**: Spoon on Linen (`/products/spoon-on-linen-1-of-1`, live as of ~19:20 UTC April 21)
+- **3 empty collections** (Altar, Cartography of Nowhere, Monochrome Flora) — populate only when 1/1 drops expire to $6
 
-**First thing Guy sees tomorrow:** 13 images to scroll. If aesthetic holds, CC continues
-with Storm Bloom (maximalist) + begins actual Shopify site design.
+### 1/1 Drop System — BUILT + RUNNING
+Full auto-rotation. Queue at `~/shopify/rockys-gallery/1of1-queue/queue.json`.
+Current queue: Isola Minore → Olive Branch → Dried Thistle → Braided Delta → Dried Protea v2.
 
-**Fulfillment decisions locked:**
-- NO Prodigi (Guy had bad assembly experience)
-- YES Printful for poster sizes + Digital downloads primary
-- Pricing target: $6 digital / ~$28-$75 Printful retail
+**Scripts at `~/shopify/rockys-gallery/scripts/`:**
+- `one_of_one.py` — state layer (queue, active, sold/expired logs, file lock, Discord alert helper)
+- `rotate.py` — core engine: `promote_next` / `retire_sold` / `demote_expired` / `sweep_expired`
+- `poll_sales.py` — 5-min cron polls Shopify for paid `tag:1of1` orders, calls retire_sold
+- `watermark.py` + `apply_watermarks.py` — diamond crosshatch watermark pipeline
+- `gallery_api.py` + `fileflare.py` — API helpers
 
-### Passport Lane corpus — awaiting Guy + Opie decision
-- AL's 200-example corpus landed at `~/github/mnemo-cortex/tests/passport/corpus/`
-- Schema adapter (`corpus_migrate.py`) bridges v0 names → Phase 1 names
-- Baseline: 48% accuracy, macro-F1 0.428
-- `hard_block` F1=0.745 (detectors work), `allow` F1=0.269 (bucket floor too aggressive)
-- Two tunings proposed — Guy + Opie's call tomorrow before Karpathy loop kicks off
-- sparks-router-v2 PR #3 CLOSED with thank-you to AL
-- **UNDER CONSTRUCTION banner** at `mnemo-cortex/passport/README.md` shipped as commit `2306c11`
-- **Strategic direction locked 2026-04-19 (Opie filed):** normal users first, enterprise later.
-  At any "normal user vs enterprise" design fork, default to normal user; flag to Guy only if the
-  answer materially differs. Full guidance at
-  `sparks-brain-guy/brain/projects/products/mnemo-passport.md` (top banner).
+**Crons (in user crontab):**
+- `*/15 * * * *` rotate.py sweep — 24h expiry sweep
+- `*/5 * * * *` poll_sales.py — sales detection
 
-### Windows ComfyUI
-- Patched `C:\Projects\ComfyUI\app\logger.py` to swallow `[Errno 22]` on flush
-- Backup at `logger.py.bak-pre-errno22-patch`
-- Launch command used: `python main.py --listen 0.0.0.0` from `C:\Projects\ComfyUI`
-- Currently running headless via SSH Start-Process
+**Rotation flow (sold case):**
+poll_sales detects paid tag:1of1 → rotate.retire_sold → archive product, log sale, update metafields, promote_next from queue → Discord alert to #cc-log
 
-### Still parked
-- **Passport Phase 1.5 vs Opie** — whether the two tunings (bucket_defaults, insufficient_evidence→review) get applied
-- **"Running nurse"** health check for Opie MCP tools
-- **Opie context gap** — opie.md doesn't yet mention Passport Lane or Gallery generation pipeline
-- **Guy's 3D creations** as future gallery collection
+**Rotation flow (expiry case):**
+cron sweep → rotate.demote_expired → price $6, tags swap, product stays ACTIVE in target collection → promote_next → Discord alert
+
+**End-to-end NOT YET TESTED in production.** Spoon on Linen is live at $25, needs first real sale or 24h-expiry to verify full rotation.
+
+### Key doctrines learned/applied today
+- **Watermark density LOCKED at** `spacing=100px, line_width=1px, alpha=70/255` — Guy approved "lighter" over "dense"
+- **Fileflare chunked S3 upload** (POST /assets/signed → PUT chunks → POST /assets/:id/uploaded → POST /assets/:id/attach). POST not PUT for the "uploaded" step (docs inconsistent).
+- **Sold 1/1 = truly gone.** Never resold. Not even at $6. Expired 1/1 = demoted to $6, that's the ONLY path to $6 for a drop.
+- **`/pages/one-of-one` template is parked.** Metafield-in-Liquid access was fighting Shopify render cache for hours. Workaround: "Today's Drop" nav link goes straight to `/products/spoon-on-linen-1-of-1`, which has the scarcity copy in its description.
+- **Real webhook deferred.** Polling every 5 min is the current production path.
+
+### Theme aesthetic — overhauled 2026-04-21
+- **Typography:** Fraunces 600 for headings, Fraunces 500 for subheadings, Inter 400 for body
+- **Palette:** warm paper (#F8F3ED) + deep warm charcoal (#1A1816) + ember red accent (#C03A1B — echoes the watermark)
+- **Schemes 1-3** updated to graduated paper tones (paper, soft paper, deeper cream)
+- Scheme 6 (hero overlay) kept dark
+
+### Shopify storefront render cache — KNOWN PAIN
+Template/section changes take 10-60 min to flow through the rendered HTML. Individual product pages update faster than `/` or `/pages/*`. Do not blame cache as an excuse, but know it's real.
+
+### Paths Guy will care about
+- **Store admin:** https://admin.shopify.com/store/yjjp1h-a6
+- **Live store:** https://rockysgallery.com
+- **GALLERY-STATUS.md** at `~/shopify/rockys-gallery/` — living doc (not yet updated to reflect 1/1 system; TODO)
+- **Fileflare dashboard:** https://app.digital-downloads.com (Guy has it bookmarked, has API key)
+
+### Bot testbed mandate
+Rocky's Gallery is BOTH a revenue store AND a testbed for Triage Nurse / Store Doctor. When we deploy those, plant edge cases here first (mispriced products, stale data, broken descriptions) and measure what the bots catch. Lab-notebook doc TBD.
+
+### Passport Lane — still parked
+`mnemo-cortex/passport/` — Phase 1.5 shipped April 18, corpus loaded April 19, baseline 48% / macro-F1 0.428. Tuning conversation with Opie pending. Strategic direction locked: normal users first, enterprise later. See `sparks-brain-guy/brain/projects/products/mnemo-passport.md`.
 
 ---
 
 ## In Progress
-- [x] **Passport Lane Phase 1.5** — SHIPPED 2026-04-18. Per-evidence provenance,
-  32 named detectors, 4-YAML config, Gate 2 stub, bucket_floor audit trail.
-  Commits: mnemo-cortex `d31e5fa`, brain `8ebd19f` (April-is-daughter fix).
-- [ ] **Rocky's Gallery — Shopify store** — Scaffold built at /home/guy/shopify/rockys-gallery/. Shopify AI Toolkit installed (17 skills). Andre's starter photos on IGOR. Next: Guy signs up for Shopify, picks 4 starter pieces, CC builds the store.
-- [ ] **Hoffman Bedding — Google Merchant Center** — GMC suspended (not dead). All product/site fixes COMPLETE. SEO + alt text applied (129/129 products, 723/723 images). 2 missing product types fixed. Microsoft Clarity installed (analytics only, April 14). Waiting for cool-down period to end before re-appeal.
-- [ ] **Stripe publishable key** — Guy needs to grab pk_live_ from dashboard.stripe.com/apikeys
-- [x] **Sparks Counters** — GoatCounter on THE VAULT (port 50180), sparks_stats FrankenTool #13, peter-stats.py, all 11 site pages instrumented. Counting from April 14.
-- [x] **Hoffman SEO batch** — 129/129 alt text + SEO title + SEO description applied. 723/723 images have alt. April reviewing live.
 
-## Up Next
-- [ ] Rocky's Gallery Shopify signup + first 4 product listings
-- [ ] Andre's full catalog download from Google Drive (auth issue — need public share or manual download)
-- [ ] Chat Portal deployment (after Stripe key)
-- [ ] Sparks Bus v0.2 — bus_subscribe (standing interest), message TTL
-- [ ] Mem0 bridge production deploy (code exists, needs pip install on THE VAULT)
-- [ ] Hoffman Bedding re-appeal (waiting on GMC cool-down end date from April)
-- [ ] Hoffman 28 collection SEO descriptions (separate batch)
+- [x] **Rocky's Gallery LIVE** (2026-04-21 afternoon)
+- [x] **1/1 Drop System shipped** — rotation engine, queue, polling cron, Discord alerts, watermark pipeline, Fileflare chunked upload
+- [x] **21 products watermarked** at lighter density (100/1/70)
+- [x] **Theme aesthetic overhaul** — Fraunces serif + warm paper + ember red
+- [x] **Meta title/description + og:image + collection hero images** — all set
+- [ ] **Passport Phase 1.5 corpus tuning** — two policy tweaks proposed, awaiting Opie's call: bucket_defaults (untrusted_web→review_required, semi_trusted_remote→allow) + insufficient_evidence→review_required
+- [ ] **Rocky's Gallery — Shopify CSR Portal** — separate product, not touched today
 
-## Blocked
-- **Heartbeat re-enable:** Resolved — heartbeat running on Nemotron free tier (1h interval)
-- **Sparky Mnemo:** ~~Needs NVIDIA/NemoClaw#1551 fix or workaround~~ RESOLVED — Docker bridge path works. Consider updating/withdrawing #1551.
+## Outstanding polish (tomorrow if desired)
 
-## Completed This Session (April 7, 2026)
+- Collection page layout (make it more gallery-index, less e-commerce grid)
+- Product page typography/whitespace refinement
+- Custom CSS asset for finer opinionated moves beyond theme settings
+- `/pages/one-of-one` template — when the metafield/render fight can be debugged
+- Real Shopify webhook (replace polling)
+- Homepage hero: currently Aisle, could rotate with the 1/1 once metafield renders work
 
-### OpenClaw 2026.4.5 Post-Update Verification
-- [x] `openclaw doctor --fix` — config migrated, backup created
-- [x] Heartbeat cron verified clean (Nemotron free, 348 runs, no cost leak)
-- [x] Mnemo bridge on THE VAULT — healthy (170 entries, save/recall working)
-- [x] Memory-core plugin enabled, dreaming enabled (daily frequency)
-- [x] Gateway restarted to pick up config changes
+## Hoffman Bedding — GMC still in cool-down
+No movement today. Re-appeal when April confirms cool-down is over.
 
-### Opie Memory Fix
-- [x] Diagnosed: Opie's watcher dead since March 25 (Desktop moved to IndexedDB)
-- [x] Stopped and disabled mnemo-watcher-opie systemd service
-- [x] Patched MCP server v2.1.0: nudge system (tool call tracking, save reminders, session_end tool)
-- [x] Pulled Desktop integration from public GitHub (mnemo-cortex v2.3.0)
-- [x] Updated both repos: mnemo-cortex (pushed) + mnemo-cortex-mcp (archived, local only)
-- [x] Updated Opie brain lane with current ground truth
-- [x] Restarted Claude Desktop, verified Opie boots with corrected context
-
-### Hoffman Bedding — Full Compliance Cleanup
-- [x] Email audit: found 2 straggler supplier emails (makeitblanket, lasetany), replaced then removed
-- [x] 14 missing product types filled in (blankets, pillows, quilts, bed frame, accessories)
-- [x] 2 ALL CAPS titles fixed (Andrea Lumbar Pillow, Palma Handwoven Baskets)
-- [x] 17 supplier URLs removed (16 melangehome.com + 1 americanblossomlinens.com)
-- [x] Reed Diffuser junk data cleaned (30 timestamp artifacts removed)
-- [x] sameAs empty social links fixed in theme header.liquid (filters blanks now)
-- [x] Contact page EST→PST: confirmed fixed in template (CDN propagating)
-- [x] TOS [LINK] placeholder: fixed by Opie + April
-- [x] Shipping policy intl contradiction: fixed by April
-- [x] Final state: 0 stray emails, 0 external URLs, 0 placeholders, all types filled, all titles clean
-- [x] Deep audit: 207/252 products clean (82.1%), site policies 100% compliant
-
-### April 6 Completed (prior session)
-- [x] Peter Widget built, deployed, live on projectsparks.ai
-- [x] Mem0 bridge built (8/8 tests pass, not deployed to production)
-- [x] Hoffman email fix (128 products unified to hoffmanbedding@gmail.com)
-
-## Notes
-- Peter Widget backend: IGOR:50095 (systemd: peter-widget.service)
-- Peter Widget API: https://igor.tailce7587.ts.net (Tailscale Funnel)
-- Peter Mnemo: IGOR:50002 (agent_id: peter-widget-{visitorId})
-- Peter knowledge: ~/peter-customer/knowledge/products.md
-- Mem0 bridge: ~/github/mnemo-cortex/agentb/mem0_bridge.py (needs pip install + deploy)
-- NemoClaw issue: NVIDIA/NemoClaw#1551
-- Hoffman: GMC suspended, all fixes done. 106 draft products ready to publish. 723 images need alt text.
-- Opie MCP: ~/github/mnemo-cortex-mcp/server.js v2.1.0 (nudge system, session_end tool)
-- Shopify auth: OAuth client_credentials flow via FrankenClaw pattern (auto-refreshes 24h tokens)
-
----
-
-*CC updates this file every session. If this file is stale, the brain is stale.*
+## Scripts Guy should know exist
+- `~/shopify/rockys-gallery/scripts/rotate.py status` — show queue depth + active drop
+- `~/shopify/rockys-gallery/scripts/one_of_one.py queue list` — list queued pieces
+- Queue files: `~/shopify/rockys-gallery/1of1-queue/*.json`
