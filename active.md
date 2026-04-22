@@ -6,6 +6,25 @@ What's happening right now. Current work, priorities, blockers, next actions.
 
 ---
 
+## Sparks Bus — Repo Package SHIPPED 2026-04-22 (PM)
+
+Standalone-capable package now lives in `~/github/mnemo-cortex/sparks_bus/`
+(committed `92af388`, pushed). 17 files: watcher, schema, config examples,
+A2A agent cards (CC/Rocky/Opie/BW/Cliff), systemd unit, README, SETUP-PROMPT,
+A2A mapping doc.
+
+- **Two modes auto-detected at startup**: FULL (Mnemo reachable) or STANDALONE
+  (payload travels in Discord notifications). Both verified end-to-end.
+- **Phase 1 hardening folded in**: tuple-returning wakers, `delivery_failed_at`
+  column for one-shot ⚠️ alerts, `BUS_*` env-var overrides for every config key.
+- **A2A baked in**: `to_a2a_task()` translator in the watcher; 5 cards under
+  `agent-cards/`; mapping reference in `A2A.md`. Transport (HTTPS/JSON-RPC) is
+  v2 roadmap — data shape compat is in now.
+- **Production watcher at `~/scripts/sparks-bus-watcher.py` is still the OLD
+  one.** Migration is a one-liner: change systemd ExecStart to point at
+  `~/github/mnemo-cortex/sparks_bus/sparks-bus-watcher.py` and restart. Holding
+  on Guy's call.
+
 ## Sparks Bus — Notification Loop SHIPPED 2026-04-22
 
 Thin upgrade on v0.1 (separate from the parked v0.2 ground-up rebuild). The
