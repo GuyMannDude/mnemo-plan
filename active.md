@@ -2,7 +2,36 @@
 
 What's happening right now. Current work, priorities, blockers, next actions.
 
-**Last updated:** 2026-04-21
+**Last updated:** 2026-04-22
+
+---
+
+## Sparks Bus — Notification Loop SHIPPED 2026-04-22
+
+Thin upgrade on v0.1 (separate from the parked v0.2 ground-up rebuild). The
+delivery-confirmation loop is now visible in `#dispatch`.
+
+- **Doctrine:** Discord = doorbell, Mnemo = mailbox, `tracking_id` = receipt.
+- **Lifecycle posts:** 📬 DELIVERED → ✅ PICKED UP → 🔄 LOOP CLOSED, plus
+  ⚠️ STALE in `#alerts` after 1h unacknowledged.
+- **All logic in `~/scripts/sparks-bus-watcher.py`** — Bus MCP server NOT
+  modified. Watcher is the single integration point; idempotent via 5 new
+  DB columns (`tracking_id, mnemo_saved_at, notified_at, pickup_notified_at,
+  stale_notified_at`). Restart-safe.
+- **Mnemo save:** `POST artforge:50001/writeback` with `session_id =
+  bus-{id}-{iso}` (or `bus-reply-{id}-{iso}` for replies). Recallable by
+  tracking_id within seconds.
+- **CC startup hook:** `~/github/sparks-brain/hooks/bus-pending.sh` prints
+  any unread CC bus messages at session start. Silent when none.
+- **Settings:** appended to SessionStart command in `~/.claude/settings.json`.
+- **Backup before ALTER:** `~/.sparks/bus.sqlite.bak-20260422-070553`.
+- Pre-existing 27 rows backfilled with sentinel `mnemo_saved_at='backfilled'`
+  to suppress retro notifications.
+- **Deferred:** Opie's startup hook (Guy handing to Opie). BW channel
+  `bw-tasks` not in `discord-channels.json` (stale JSON, not a real bug —
+  delivery already works). Out of scope.
+
+Full session log in `~/github/sparks-brain-guy/brain/cc-session.md` (Session 10).
 
 ---
 
