@@ -2,29 +2,49 @@
 
 What's happening right now. Current work, priorities, blockers, next actions.
 
-**Last updated:** 2026-04-22 (late PM)
+**Last updated:** 2026-04-22 (evening)
 
 ---
 
-## Kickstart — Next Session
+## Developer's Passport v2.4.1 — SHIPPED 2026-04-22
 
-**Two big targets Guy named at session end:**
+Rebrand + policy tweaks + docs release. Product now positioned as
+dev-targeted beta, not a normal-user product. Possessive in the name
+is deliberate — drops when hosted / browser-AI story ships.
 
-1. **Passport — pick back up.** Phase 1 + 1.5 shipped April 18 (5 MCP tools live in passport/, corpus loaded April 19, baseline 48% / macro-F1 0.428). Tuning conversation with Opie was pending at session end. Two policy tweaks proposed but not decided: bucket_defaults (untrusted_web→review_required, semi_trusted_remote→allow) + insufficient_evidence→review_required. Source: `~/github/mnemo-cortex/passport/`, deployed via symlink to `/home/guy/agentb-bridge/passport` on artforge. Strategic direction from cc-session.md Session 9 still locked: normal users first, enterprise later. Read `~/github/sparks-brain-guy/brain/projects/products/mnemo-passport.md` for the strategic doc.
+**What landed (mnemo-cortex commit `14834ba`, pyproject 2.4.1):**
+- Policy tweaks applied: `semi_trusted_remote → allow`, `untrusted_web → review_required`, new `insufficient_evidence → review_required`. validation.py now reads insufficient_evidence from policy instead of hard-coding hard_block.
+- Eval moved 48.0% / 0.428 → **53.0% / 0.458** (+5pp). F1: `allow` +0.251, `review_required` +0.089, `hard_block` +0.027, `local_only` -0.246 (tradeoff from raising untrusted_web floor — those cases now land at review_required).
+- passport/README.md rewritten (UNDER CONSTRUCTION banner gone, 5-tool table corrected, 5-minute dev quickstart verified end-to-end, honest Known Gaps section).
+- Top-level README.md, CAPABILITIES.md, CHANGELOG.md updated with Developer's Passport framing.
+- Eval harness (`tests/passport/corpus_score.py`, `corpus_migrate.py`) in repo.
 
-2. **Hook Mnemo to ChatGPT and Gemini.** Mnemo is currently wired to Claude (Code + Desktop) and OpenClaw. We want it speaking to ChatGPT and Gemini too. The Mnemo HTTP API at `artforge:50001` already exposes `/writeback`, `/context`, `/preflight`, `/passport/*` — wiring is plumbing, not new server work. ChatGPT path is likely a custom GPT with an Action calling our HTTP API; Gemini path is a Gemini Extension or similar. Starting question: do we want a Mnemo MCP-equivalent for each platform, or a thin Action/Extension that posts to the existing endpoints? Opie likely has thoughts.
+**Landing page** (projectsparks-site commit `566fd34`, deployed):
+- `projectsparks.ai/mnemo-cortex` Passport section renamed to Developer's Passport, callout copy reframed around safety machinery, meta/og/twitter descriptions updated, `TODO` comment marks the rename as intentional for future full release.
 
-**State of the world at session end (2026-04-22 late PM):**
-- Sparks Bus: shipped end-to-end — notification loop hardened, packaged into mnemo-cortex/sparks_bus AND standalone repo at github.com/GuyMannDude/sparks-bus, dedicated landing page live at projectsparks.ai/sparks-bus, GitHub social preview asset committed (Guy uploaded via web UI), homepage constellation node added.
-- WikAI Compiler: nightly cron live on artforge at 3:30 AM, smoke tested with entities/guy.md.
-- Mnemo Cortex v2.4.0: README + landing page updated (WikAI, Sparks Bus, Passport, three-layer architecture, Karpathy + Nate B Jones + Google A2A + Mem0 credits), CHANGELOG entry, version bumped.
-- Brand legibility: Mem0 vs Memo CSS fix shipped (`.mem0` class wraps body-text brand mentions in JetBrains Mono so the digit 0 doesn't look like letter o in Cormorant Garamond).
-- All commits pushed; all firebase deploys live.
+**Infra changes on artforge:**
+- `~/.mnemo/passport/policy.yaml` synced to tweaked values.
+- uvicorn at 50001 restarted (pid 415966). Old pid was 2732068, running since April 18 with cached pre-tweak policy.
+- **Patched `agentb-bridge/agentb_mcp.py`**: the FastMCP constructor fails at startup when `MNEMO_OAUTH_*` env vars aren't set because `verifier` was built unconditionally while `_auth_settings` was None — mcp 1.27.0 rejects that combo. Surgical fix: `token_verifier=verifier if _auth_settings else None`. Backup at `agentb_mcp.py.bak-pre-oauth-conditional-2026-04-22`.
+- Smoke test: `/passport/context` returns empty-claim structure; `/passport/pending` returns obs_001 + obs_003 (the two retained entries).
 
-**First moves on resume:**
-- Read this active.md + cc-session.md
-- Read the Passport strategic doc to refresh on monetization tiers and the corpus tuning state
-- Ask Guy: which platform first — ChatGPT or Gemini? Custom GPT Action vs Gemini Extension vs MCP-bridge per platform — what shape does he want?
+**Held out of repo — decision: available on request:**
+- 200-entry eval corpus YAMLs (tests/passport/corpus/{benign,toxic,edge,adversarial}.yaml). GitHub secret-scanning rejected push because toxic.yaml contains fake-but-well-formed Slack tokens used as detector training bait. CHANGELOG + README note that corpus ships on request.
+
+**Pending cleanup (still in queue):**
+- obs_005–014 (Opie's speculative seed round from earlier today) — WIPED from artforge pending queue before release work started.
+- obs_002 (wrong claim — Guy does NOT want confirmation prompts) and obs_004 (dup of obs_003) — FORGOTTEN earlier in session per Guy's direction.
+- obs_001 + obs_003 remain in pending; Guy can promote or forget at leisure.
+
+**Parked (not shipping — ditch-or-revive based on demand):**
+- Chrome extension (mnemo-passport-ext) — was briefly explored as the "take your AI with you" vehicle. Pivoted away: Mnemo is already an MCP server, browser AIs are the real target.
+- claude.ai custom connector via HTTP MCP wrapper — needed because Mnemo's port 50001 is REST, not MCP protocol. Needs: FastMCP HTTP wrapper + Cloudflare Tunnel to `mnemo.projectsparks.ai` (or similar) + bearer/OAuth auth. 1–2 days of build work. Parked until a real user for the browser path shows up.
+- Platform reality check for reference: Claude.ai supports user-configured remote MCP (Settings → Connectors), ChatGPT requires Developer Mode and is read-only for Plus/Pro (write-capable only on Business+), Gemini consumer web has no MCP UI at all (CLI + API + Enterprise only).
+
+**First moves next session:**
+- If browser-AI interest returns: start with Claude.ai-only, FastMCP HTTP wrapper exposing `passport_get_user_context` only, Cloudflare Tunnel. Don't over-scope.
+- If corpus-shipping approved: either (a) click GitHub's unblock URL (`/security/secret-scanning/unblock-secret/3CjQ0iqbUupe20LaNiLcWjG89Cf` on mnemo-cortex), (b) obfuscate fake tokens in corpus YAMLs, or (c) leave held-on-request.
+- Opie doctrine drift noted earlier in session: he auto-dispatched observations without courier-through-Guy. Guy pulled the ball back to direct-to-CC for this release. If/when Opie returns to lead, re-enforce the assembly-line boundary.
 
 ---
 
