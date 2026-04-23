@@ -5,8 +5,9 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 ---
 
 ## Google Drive (Rocky, read-only)
-- **How:** MCP stdio subprocess via `@modelcontextprotocol/server-gdrive` (archived/deprecated npm package, but stdio protocol is stable and it still works).
-- **Wired in:** `~/.openclaw/openclaw.json` → `mcp.servers.gdrive` → `npx -y @modelcontextprotocol/server-gdrive` with env vars `GDRIVE_OAUTH_PATH` + `GDRIVE_CREDENTIALS_PATH`.
+- **How:** Two FrankenTools at `~/github/frankenclaw/tools/gdrive.py` (commit `9a33d6f`): `gdrive_search` + `gdrive_read`. Auto-discovered by FrankenClaw on Rocky session start.
+- **Why not the MCP server:** The archived `@modelcontextprotocol/server-gdrive` exposes reading as MCP **Resources**, not Tools. OpenClaw's agent surface is tool-centric — Rocky could search but couldn't see the Resource-based read path. Swapping to FrankenClaw owns the full flow in Python and matches the rest of the tool pattern (shopify_*, notebooklm_*).
+- **Was:** `~/.openclaw/openclaw.json` had a `mcp.servers.gdrive` entry. Removed 2026-04-22 in favor of the FrankenClaw implementation.
 - **OAuth client** (the app): `~/.openclaw/google/credentials.json` — "installed" type OAuth 2.0 client, was already on disk from Feb 20.
 - **User token** (the grant): `~/.openclaw/google/.gdrive-server-credentials.json`, mode 600, contains access_token + refresh_token. Completed interactive OAuth flow 2026-04-22 18:54. Account: `guitarmanndude69@gmail.com`. Scope: `https://www.googleapis.com/auth/drive.readonly` (whole Drive, read-only — no way to scope narrower with the archived server).
 - **Tools exposed to Rocky:** `gdrive_search` (search files/folders), `gdrive_read` (read file contents).
