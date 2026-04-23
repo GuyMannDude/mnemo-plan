@@ -15,6 +15,8 @@ What's happening right now. Current work, priorities, blockers, next actions.
 - **OpenClaw 2026.4.21** dropped during this session — staying on .20, letting it settle. Recipe for .21 bump ready when wanted.
 - **Guy Hutchins** (not Hoffman) — fixed in mnemo-cortex pyproject.toml + CONTRIBUTING.md. Memory saved.
 
+**Parked idea — Passport CLI companion (2026-04-22):** Guy raised the question of shipping Passport as a CLI alongside MCP (someone in a video argued CLI over MCP for most use cases). CC research: all 5 Passport tools are stateless CRUD — textbook CLI shape, ~60-line wrapper over the existing Python module. Wins: scriptable, cronable, pipeable, zero context overhead for non-using agents, works in any shell-equipped agent. Loses: tool auto-discovery, cuts off Claude Desktop (no shell). **Build trigger:** ship the CLI when ONE of these is true — (a) Guy wants to script against Passport from cron/bash hooks, (b) a new agent platform shows up without MCP support, (c) public users ask for non-MCP integration. Until then, MCP covers real need.
+
 **Next session first moves:**
 - Test Rocky's gdrive tools in UI (ask Rocky to search a known Drive file).
 - Check PR #2315 review status at https://github.com/NVIDIA/NemoClaw/pull/2315.
