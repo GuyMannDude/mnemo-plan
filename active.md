@@ -18,6 +18,7 @@ What's happening right now. Current work, priorities, blockers, next actions.
 **Next session first moves:**
 - Test Rocky's gdrive tools in UI (ask Rocky to search a known Drive file).
 - Check PR #2315 review status at https://github.com/NVIDIA/NemoClaw/pull/2315.
+- **PR #2315 signing deferred:** CodeRabbit approved, zero comments, merge-blocked only on "verified signatures." Guy attempted to add SSH Signing Key 2026-04-22 evening but hit Pixel 2FA trouble + a despaced-key paste error. Recovery codes found at `~/Downloads/github-recovery-codes.md` (16 codes confirmed format). Pickup: register `~/.ssh/id_ed25519.pub` at https://github.com/settings/ssh/new as **Key type = Signing Key** (paste must keep the two mandatory spaces in `ssh-ed25519 AAAA... rocky@igor`). Then CC amends commit at `/tmp/NemoClaw` with author `Guy Hutchins <guy@projectsparks.ai>` (local-repo config only, not global), SSH-signs, rebases on `origin/main`, force-pushes `mnemo-cortex-preset` branch on `GuyMannDude/NemoClaw`.
 - If Rocky runs clean for 24+h on .20, bump to .21 using the documented recipe (sudo npm install + two chowns + daemon-reload + restart).
 - Sparky NemoClaw upgrade: gated on PR #2315 merging upstream.
 
