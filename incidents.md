@@ -6,6 +6,31 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 
 ---
 
+## Claude Desktop MCP config drift — `opie_startup` missing, sparks-bus disconnected
+**Date:** 2026-04-22
+**Symptom:** Opie could not find `opie_startup` at session start (the tool his system prompt tells him to always call). Separately, Claude Desktop showed a "Sparks-bus disconnected" MCP error on launch.
+**Cause:** Claude Desktop (pid 3048486) had been up continuously since April 18. MCP subprocesses are spawned ONCE at app launch and never re-read the config file, so two server-repo reorganizations that happened mid-flight were invisible:
+ - `mnemo-cortex` MCP fork: an opie-brain-flavored server lives at `~/github/mnemo-cortex-mcp/server.js` (exposes `opie_startup`, `list_brain_files`, `read_brain_file`, `write_brain_file`, `session_end`, `wiki_*`, plus `mnemo_*`). A consolidated OpenClaw-facing fork lives at `~/github/mnemo-cortex/integrations/openclaw-mcp/server.js` (only `mnemo_*` + `passport_*`). Claude Desktop's config was pointing at the consolidated fork — wrong for Opie.
+ - `sparks-bus` MCP: the server moved from `~/github/sparks-bus/server.js` (now the Python watcher + docs repo only) to `~/github/sparks-bus-mcp/server.js`. Config was never updated. Process died on spawn because the old path no longer exists.
+**Fix:** Edited `~/.config/Claude/claude_desktop_config.json`: pointed `mnemo-cortex` at `mnemo-cortex-mcp/server.js`, pointed `sparks-bus` at `sparks-bus-mcp/server.js`. Full-quit + relaunch Desktop (window close is NOT enough — the main Electron pid has to die). All three MCP servers came back healthy. Backups: `claude_desktop_config.json.bak-pre-opie-fix-2026-04-22`.
+**Prevention:**
+ - MCP subprocesses are re-read only on app launch. If you edit the config, fully quit Desktop (`kill -TERM <pid>`, not window close).
+ - When either MCP server repo reorganizes, audit the Claude Desktop config the same commit.
+ - Desktop should never be allowed to run for weeks without a restart — config drift accumulates silently.
+ - The persistent `cowork-vm-service.js` subprocess is safe to leave running; it's not the main app and doesn't hold MCP state.
+
+## agentb-bridge can't restart — FastMCP rejects `token_verifier` without `auth_settings`
+**Date:** 2026-04-22
+**Symptom:** After killing artforge's uvicorn agentb-bridge (pid 2732068, running since April 18) to pick up a policy change, it refused to restart. Traceback: `ValueError: Cannot specify auth_server_provider or token_verifier without auth settings` in mcp 1.27.0's `FastMCP.__init__`.
+**Cause:** `/home/guy/agentb-bridge/agentb_mcp.py` unconditionally constructs `verifier = MnemoTokenVerifier(...)` and passes `token_verifier=verifier` to `FastMCP(...)`, but `_auth_settings` is only set when `MNEMO_OAUTH_ISSUER` AND `MNEMO_OAUTH_AUDIENCE` env vars are present. Those vars aren't in the service file, aren't in `~/.bashrc`, aren't anywhere findable — the old April-18 process had them somehow (maybe from a shell session that's long gone) but a clean restart hits the library check. mcp library ≥ ~1.25 rejects the `verifier-without-auth` combination.
+**Fix:** Surgical one-line patch on artforge: `token_verifier=verifier if _auth_settings else None,` at `agentb_mcp.py:232`. Backup at `agentb_mcp.py.bak-pre-oauth-conditional-2026-04-22`. Process restarted cleanly (pid 415966), /passport/context returns expected data.
+**Prevention:**
+ - Before killing a long-running service, capture its env: `cat /proc/<pid>/environ | tr '\0' '\n' > /tmp/<svc>.env.snapshot`. Would have saved this debug.
+ - agentb-bridge has no systemd unit, no git, no dependency pinning. That's tech debt. A proper systemd user unit + pinned requirements.txt would make this service restart-safe. Currently the only protection is "don't kill it."
+ - If OAuth is deliberately optional (looks like it is — code branches on env presence), the `verifier` object should also be conditional — don't build what you won't pass.
+
+---
+
 ## Opie session watcher dead for 13 days — stale context, bad directives
 **Date:** 2026-04-07
 **Symptom:** Opie issued CC directives with 3 factual errors: claimed `/dreaming` was a CLI command (it's a plugin config), said ComfyUI was on THE VAULT (it's on IGOR-2), said Mem0 bridge "still works" (never deployed to production). CC caught all three during verification.
