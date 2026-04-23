@@ -6,6 +6,16 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 
 ---
 
+## Rocky's Gallery rotation self-deadlock — demote_expired failed silently for 30+ hours
+**Date:** 2026-04-23
+**Symptom:** Spoon on Linen was 50+ hours past its 24h expiry but still showed as `active` in `1of1-queue/active.json`, with live Shopify price at $6. Every 15min cron sweep logged `demote_start` then failed with `rotation_lock timeout after 30.0s`.
+**Cause:** Python `fcntl.flock` is per-fd, not per-process. `demote_expired` takes `rotation_lock` and then calls `expired_log_append` / `active_set` which each ALSO enter `with rotation_lock()`. Each `with` opens a fresh fd, so the second `flock` deadlocks against the first from the same process. Shopify side of demote succeeded (price→$6, tags→expired) before the deadlock, then state-clear failed — hence the orphaned `active` entry that looked like "nothing ran." Silent in production because the cron's stderr was redirected to sweep.log but the log file was never reviewed.
+**Fix:** Made `rotation_lock` reentrant via a module-level depth counter in `one_of_one.py` — re-entry within the same process takes no kernel lock, just increments/decrements. Also removed redundant `with rotation_lock()` blocks from `sold_log_append` and `expired_log_append` (they're always called from within an outer lock, so the wrap was pure overhead anyway). Verified with a nested-context test; manual `demote_expired` run cleaned up Spoon's state.
+**Prevention:**
+ - When designing a file-lock helper in Python, either make it reentrant from the start or document loudly that helpers that take it can't call each other. The subtle "same process, different fds" failure mode is easy to miss.
+ - Watch the cron log file for any script that uses file locks. The Spoon issue was invisible because nobody looked at `/home/guy/shopify/rockys-gallery/logs/sweep.log` — 30+ successive timeout tracebacks went unnoticed. Consider adding a `cronalarm` wrapper for this cron so Discord notifies on consecutive-error runs.
+ - `~/shopify/rockys-gallery/` is not a git repo. Changes to rotation code lived only on IGOR — a tree tarball or git init would be hygiene worth adding.
+
 ## OpenClaw 4.20 upgrade — four cascading EACCES / cache snags
 **Date:** 2026-04-22
 **Symptom:** After `sudo npm install -g openclaw@2026.4.20` + gateway restart on IGOR, four cascading failures:
