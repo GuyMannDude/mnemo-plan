@@ -4,6 +4,28 @@ Every service, tool, and dependency in the Project Sparks ecosystem.
 
 ---
 
+## Rocky's Gallery 1-of-1 rotation — TORN DOWN 2026-04-23
+
+All automation killed per Guy's directive. 1-of-1 drops are manual now: Guy picks the piece, sets the price, publishes, pulls.
+
+**What was removed:**
+- Both crons (`*/15 rotate.py sweep`, `*/5 poll_sales.py`) — out of crontab.
+- `rotate.py`, `poll_sales.py`, `one_of_one.py` — moved to `~/shopify/rockys-gallery/scripts/_archived-automation-2026-04-23/`. Reversible if ever needed.
+- `active.json` cleared (active=None, awaiting_gate=None).
+- Isola Minore on Shopify → `status=DRAFT` (pulled from storefront). Product record preserved for manual re-promotion later.
+
+**What's kept in place:**
+- Utility scripts: `gallery_api.py` (Shopify Admin API helper), `fileflare.py` (Fileflare upload), `watermark.py` + `apply_watermarks.py` (image watermarking). Still useful for manual 1/1 prep.
+- `queue.json`, `sold-log.json`, `expired-log.json` — historical data, left on disk.
+- Spoon on Linen at $6 in the Altar collection — demote already completed, stays as-is.
+
+**Replacement: Shopify Flow → Discord webhook → `#alerts` on 1/1 sale.**
+- Steps documented at `~/shopify/rockys-gallery/SHOPIFY-FLOW-1OF1-ALERT.md`.
+- One-time setup (Guy creates a Discord webhook for `#alerts`, builds a Flow with trigger=`order created`, condition=`any line item tag includes 1of1`, action=`Send HTTP request` to the webhook).
+- Zero server code. Replaces `poll_sales.py` entirely.
+
+**Doctrine:** Guy's 1-of-1s are a curator move now, not a pipeline. Each drop is manual and intentional. Price, timing, and lifecycle are Guy's calls per piece.
+
 ## Microsoft Clarity — rockysgallery.com analytics
 - **Live on rockysgallery.com as of 2026-04-23 evening** (snippet injected via Shopify admin → theme.liquid or Additional scripts).
 - **Project ID:** `wge18xcvkx` (confirmed by curling the live pages and grepping the clarity init call).
