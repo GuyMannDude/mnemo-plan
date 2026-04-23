@@ -6,6 +6,29 @@ The runbook. Every bug that cost real debugging time, documented so it never cos
 
 ---
 
+## OpenClaw 4.20 upgrade — four cascading EACCES / cache snags
+**Date:** 2026-04-22
+**Symptom:** After `sudo npm install -g openclaw@2026.4.20` + gateway restart on IGOR, four cascading failures:
+ 1. Gateway crash-looped on first 2 restart attempts with `Cannot find module runtime-prepare.runtime-<hash>.js` (hash mismatch).
+ 2. Log flooded with `EACCES: permission denied, open '/tmp/jiti/*.cjs'` warnings → Telegram + Discord channels failed to hot-load.
+ 3. After jiti fix, 4 plugins (acpx, browser, discord, telegram) failed to initialize: `EACCES: permission denied, mkdir '/usr/lib/node_modules/openclaw/dist/extensions/<plugin>/node_modules'`.
+ 4. Orthogonal: `~/.openclaw/openclaw.json` had stale sparks-bus MCP path (`~/github/sparks-bus/server.js`, file moved to `~/github/sparks-bus-mcp/server.js`).
+**Cause:**
+ - (1) Transient — `jiti` bundler cache from the previous version referenced a bundle hash that no longer existed. Self-healed on retry 3 once the new bundle was loaded and cached.
+ - (2 & 3) Root ownership: `sudo npm install -g` writes to `/usr/lib/node_modules/openclaw/` as root, but the gateway runs as user `guy`. OpenClaw 4.20 does two runtime-write operations that fail when owned by root: jiti caches TypeScript entries to `/tmp/jiti/` (pre-existing root-owned entries block overwrite), and each plugin installs its own `node_modules` on first load inside `dist/extensions/<plugin>/`.
+ - (4) Independent: the sparks-bus MCP server repo was renamed before Rocky was restarted, same stale-path pattern as the April 22 Claude Desktop fix.
+**Fix:**
+ ```
+ sudo chown -R guy:guy /tmp/jiti/
+ sudo chown -R guy:guy /usr/lib/node_modules/openclaw/dist/extensions/
+ ```
+ Plus: edit openclaw.json sparks-bus entry to `~/github/sparks-bus-mcp/server.js`. Restart gateway.
+**Prevention:**
+ - **After every `sudo npm install -g openclaw@X`, follow with these two chown commands before restarting the gateway.** They're cheap, idempotent, and avoid every re-run of this incident.
+ - Whenever an MCP server repo is renamed (sparks-bus, mnemo-cortex, etc), grep every agent's config for the old path in the same commit.
+ - Gateway crash-looping with self-heal is a known pattern — if you see up to 2 crashes then a successful start, the jiti cache just had to repopulate. Only dig deeper if it fails more than 3 times.
+ - The systemd `.service` file hard-codes a version string in its Description field — it won't update on upgrade. Ignore the cosmetic mismatch; trust `openclaw --version` and `ps -o etime` for the real state.
+
 ## Claude Desktop MCP config drift — `opie_startup` missing, sparks-bus disconnected
 **Date:** 2026-04-22
 **Symptom:** Opie could not find `opie_startup` at session start (the tool his system prompt tells him to always call). Separately, Claude Desktop showed a "Sparks-bus disconnected" MCP error on launch.
