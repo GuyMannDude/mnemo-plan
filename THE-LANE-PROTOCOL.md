@@ -2,6 +2,8 @@
 
 > The operating practice that goes with [mnemo-plan](README.md) and [Mnemo Cortex](https://github.com/GuyMannDude/mnemo-cortex). The structure tells you what files to have. This tells you how to live in them.
 
+> 💡 **Paste this into your agent.** This document works as a boot file or system-prompt include. The protocol works whether the human follows it, the agent follows it, or both. Feeding it to your agent means the ritual runs even when you forget.
+
 ---
 
 ## The pivot
