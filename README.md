@@ -6,6 +6,8 @@
 
 **mnemo-plan** is the opposite: the stuff *you* write and curate. Project specs. Active task lists. Decision logs. Architecture docs. Anything an agent needs to know **before** a conversation starts.
 
+> **For the operating practice that goes with this template, see [THE-LANE-PROTOCOL.md](THE-LANE-PROTOCOL.md).** The structure tells you what files to have. The protocol tells you how to live in them.
+
 It's just a folder of markdown files in a Git repo. Any LLM that can call the Mnemo MCP tools `read_brain_file` / `write_brain_file` / `list_brain_files` can read and edit them. Not Claude-specific.
 
 ## How to use this template
