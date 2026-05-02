@@ -35,6 +35,8 @@ Use `write_brain_file` to update the relevant file:
 
 Keep entries short. Future-you will thank present-you for terse, well-named sections.
 
+**Optional: structured task lines.** When tasks have dependencies, multi-agent handoff, or human-gate review, promote them from plain bullets to the structured form documented in [THE-LANE-PROTOCOL.md § Task structure](THE-LANE-PROTOCOL.md#task-structure-optional). Shape: `- [ ] [task:slug] (assignee, state:label, [blocks/blocked-by:slug]) Description`. Untagged bullets stay valid for trivial work.
+
 When you're done writing, **commit and push** so other machines and other agents see your updates next time:
 
 ```bash

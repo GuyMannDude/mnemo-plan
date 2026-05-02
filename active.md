@@ -16,10 +16,12 @@ useful. Use checkboxes for trackable tasks.
 ## In Progress
 
 - [ ] *(active task — short description, what's left to do)*
+- [ ] [task:example-slug] (your-name, state:in-progress) *(structured form — see [THE-LANE-PROTOCOL.md](THE-LANE-PROTOCOL.md#task-structure-optional). Optional. Use when tasks have dependencies or multi-agent handoff.)*
 
 ## Up Next
 
 - [ ] *(queued — will pick up after current is unblocked)*
+- [ ] [task:another-slug] (your-name, state:up-next, blocked-by:example-slug) *(structured form, optional)*
 
 ## Blocked
 
